@@ -20,6 +20,7 @@ class BaseModel:
                         default=datetime.utcnow(),
                         nullable=False
                         )
+
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model
         Args:
@@ -53,17 +54,11 @@ class BaseModel:
 
     def to_dict(self):
         """Convert instance into dict format"""
-        dic = {}
-        dic.update(self.__dict__)
-        try:
-            del dic['_sa_instance_state']
-        except Exception:
-            pass
-        dic.update({'__class__':
-                               (str(type(self)).split('.')[-1]).split('\'')[0]})
-        dic['created_at'] = self.created_at.isoformat()
-        dic['updated_at'] = self.updated_at.isoformat()
-
+        dic = self.__dict__.copy()
+        dic["__class__"] = str(type(self).__name__)
+        dic["created_at"] = self.created_at.isoformat()
+        dic["updated_at"] = self.updated_at.isoformat()
+        dic.pop("_sa_instance_state", None)
         return dic
 
     def delete(self):
